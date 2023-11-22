@@ -2,13 +2,9 @@
 
 ## Running the project
 
---Backend(Java)
-
+--Backend(Java, PostgresSQl database)
 
 --Frontend(JavaScrip / Vue)
-
-npm install -g local-cors-proxy
-lcp --proxyUrl https://zenquotes.io
 
 ## Database
 

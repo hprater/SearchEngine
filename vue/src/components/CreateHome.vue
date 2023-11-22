@@ -1,26 +1,31 @@
 <template>
-  <div class="aol-box">
-
-    <div class="content">
+  <div>
+    <!-- Image, Header, and Logout Button -->
+    <div class="header-elements">
       <img src="../../src/Assets/Resources/uofa.jpg" alt="University of Arkansas Logo" class="logo-image">
       <h1 class="aol-heading">RazorBack Search</h1>
-
-      <div class="aol-box-input">
-        <input v-model="userWithInput.query" @keyup.enter="submitInput" placeholder="Enter Query">
-      </div>
-
-      <loading-overlay :loading="loading"/>
-      <div class="response-area">
-        <div class="typing-text" v-if="responseVisible" v-html="typedResponse"></div>
-      </div>
-
-      <div class="button-container">
+      <div class="aol-logout-container">
         <router-link v-bind:to="{ name: 'logout' }" class="aol-logout">Logout</router-link>
-        <router-link v-bind:to="{ name: 'home' }" class="aol-index">Indexing</router-link>
+      </div>
+    </div>
+
+    <!-- Query and Response Box -->
+    <div class="aol-box">
+      <div class="content">
+        <div class="aol-box-input">
+          <input v-model="userWithInput.query" @keyup.enter="submitInput" placeholder="Enter Query">
+        </div>
+
+        <loading-overlay :loading="loading"/>
+        <!-- Display the response area if there is a response -->
+        <div class="response-area" v-if="responseVisible">
+          <div v-html="formattedResponse"></div>
+        </div>
       </div>
     </div>
   </div>
 </template>
+
 <script>
 import messageService from '../services/MessageService';
 import LoadingOverlay from './CreateLoading.vue';
@@ -36,116 +41,33 @@ export default {
       },
       loading: false,
       responseVisible: false,
-      isResponding: false,
-      typedResponse: "",
       response: ''
     };
   },
   methods: {
     submitInput() {
-      if (!this.isResponding) {
+      if (!this.loading) {
         this.loading = true;
 
-        const formatedData = {
+        const formattedData = {
           id: this.userWithInput.id,
           type: this.userWithInput.type,
           query: this.userWithInput.query
         };
 
-        // Reset typedResponse before triggering animation
-        this.typedResponse = '';
-
-        this.isResponding = true;
-
-        // Simulate an asynchronous action
-        setTimeout(() => {
-          messageService
-              .sendQuestion(formatedData)
-              .then(response => {
-                this.response = response.data;
-                this.userWithInput.query = '';
-                this.loading = false;
-                this.responseVisible = true;
-                this.startTypingEffect(this.response);
-                this.isResponding = false;
-              })
-              .catch(error => {
-                console.error('Error fetching data:', error);
-                this.loading = false;
-                this.isResponding = false;
-              });
-        }, 50);
-      }
-    },
-    startTypingEffect(text) {
-      this.typedResponse = '';
-      this.currentIndex = 0;
-      clearInterval(this.typingInterval);
-
-      this.typingInterval = setInterval(() => {
-        if (this.currentIndex < text.length) {
-          const char = text[this.currentIndex];
-          const isSpace = char === ' ';
-
-          if (isSpace && text[this.currentIndex + 1] === ' ') {
-            this.typedResponse += '<br>'; // Add a newline for two consecutive spaces
-            this.currentIndex += 2; // Skip the second space
-          } else if (char === '^') {
-            const endIndex = text.indexOf('^', this.currentIndex + 1);
-            if (endIndex !== -1) {
-              const boldText = text.substring(this.currentIndex + 1, endIndex); // ^text^ data will be bold
-              this.typedResponse += `<b>${boldText}</b>`;
-              this.currentIndex = endIndex + 1;
-            } else {
-              this.typedResponse += char;
-              this.currentIndex++;
-            }
-          } else if (char === '$') {
-            const endIndex = text.indexOf('$', this.currentIndex + 1); // $LinkName$*http://link*
-            if (endIndex !== -1) {
-              const hyperlinkName = text.substring(this.currentIndex + 1, endIndex);
-              this.currentIndex = endIndex + 1;
-
-              const startLinkIndex = text.indexOf('*', this.currentIndex);
-              if (startLinkIndex !== -1) {
-                const endLinkIndex = text.indexOf('*', startLinkIndex + 1);
-                if (endLinkIndex !== -1) {
-                  const linkText = text.substring(startLinkIndex + 1, endLinkIndex);
-                  this.typedResponse += `<a href="${linkText}" target="_blank">${hyperlinkName}</a>`;
-                  this.currentIndex = endLinkIndex + 1;
-                } else {
-                  this.typedResponse += char;
-                  this.currentIndex++;
-                }
-              } else {
-                this.typedResponse += char;
-                this.currentIndex++;
-              }
-            } else {
-              this.typedResponse += char;
-              this.currentIndex++;
-            }
-          } else {
-            this.typedResponse += char;
-            this.currentIndex++;
-          }
-        } else {
-          clearInterval(this.typingInterval);
-        }
-      }, 10); // Adjust typing interval as needed
-    },
-    showResponse() {
-      this.responseVisible = true;
-      this.startTypingEffect(this.response);
-    }
-  },
-  watch: {
-    response: {
-      immediate: true,
-      handler() {
-        if (!this.loading && this.responseVisible === false) {
-          this.showResponse();
-        }
+        messageService
+            .sendQuestion(formattedData)
+            .then(response => {
+              this.response = response.data;
+              this.userWithInput.query = '';
+              this.responseVisible = true;
+            })
+            .catch(error => {
+              console.error('Error fetching data:', error);
+            })
+            .finally(() => {
+              this.loading = false;
+            });
       }
     }
   },
@@ -157,41 +79,62 @@ export default {
       // Format response text with HTML line breaks
       return this.response.replace(/\n/g, '<br>');
     }
-  },
+  }
 };
 </script>
 
 <style scoped>
+/* Your existing styles here */
+.header-elements {
+  display: flex;
+  justify-content: space-between;
+  padding: 25px; /* Add padding to the header elements */
+  background-color: transparent; /* Set background color to transparent */
+  max-width: 1300px;
+  width: 100%;
+  margin: 0 auto;
+}
 
-/*login box format*/
+.logo-image {
+  max-width: 110px;
+  height: auto;
+  border-radius: 25px;
+}
+
+.aol-heading {
+  font-size: 35px;
+  color: #A03611;
+  font-family: 'Dancing Script', cursive;
+}
+
+.aol-logout {
+  text-decoration: none;
+  color: #FFFFFF;
+  padding: 11px 20px;
+  border: 1px solid #000000;
+  box-shadow: 7px 7px 0px rgba(100, 98, 98, 0.2);
+  cursor: pointer;
+  font-family: "MS Sans Serif", sans-serif;
+  font-size: 14px;
+  transition: text-decoration 0.3s;
+  border-radius: 25px;
+}
+
+.aol-logout {
+  background-color: #A03611;
+}
+
 .aol-box {
   display: flex;
   background-color: #FFFFFF;
   border: 3px solid #CCCCCC;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  padding: 20px; /* Add padding for content spacing */
-  max-width: 1000px;
+  padding: 20px;
+  max-width: 1100px;
   width: 100%;
-  margin: 0 auto; /* Adjust margin for centering */
+  margin: 0 auto;
   position: relative;
-  border-radius: 15px; /* Add rounded edges */
-}
-
-.logo-image {
-  max-width: 100px; /* Adjust the image's max width */
-  height: auto; /* Maintain aspect ratio */
-  border-radius: 10px; /* Add rounded corners to the image */
-}
-
-.aol-heading {
-  font-size: 28px;
-  margin-bottom: 20px;
-  color: #A03611;
-  text-align: center; /* Center the text horizontally */
-}
-
-.aol-box-input {
-  margin-bottom: 1rem;
+  border-radius: 30px;
 }
 
 .aol-box-input label {
@@ -201,81 +144,25 @@ export default {
 .aol-box-input input {
   width: calc(100% - 27px);
   padding: 10px;
-  margin-bottom: 10px;
-  border: 3px solid #CCCCCC;
+  border: 2px solid #CCCCCC;
   font-family: Verdana, sans-serif;
   font-size: 16px;
-  border-radius: 5px; /* Add rounded edges to input fields */
-}
-
-.button-container {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 25px;
-}
-
-.aol-logout,
-.aol-index {
-  position: absolute;
-  text-decoration: none;
-  bottom: 20px;
-  color: #FFFFFF;
-  padding: 10px 20px;
-  border: 1px solid #000000;
-  box-shadow: 7px 7px 0px rgba(100, 98, 98, 0.2);
-  cursor: pointer;
-  font-family: "MS Sans Serif", sans-serif;
-  font-size: 14px;
-  transition: text-decoration 0.3s;
-  border-radius: 25px; /* Add rounded corners */
-}
-
-.aol-logout {
-  left: 25px;
-  background-color: #A03611;
-}
-
-.aol-index {
-  right: 25px;
-  background-color: #A03611;
-}
-
-.aol-logout:hover,
-.aol-index:hover {
-  text-decoration: underline;
+  border-radius: 10px;
 }
 
 .content {
-  flex-grow: 1; /* Allow content to grow and fill available space */
-  padding: 5px;
+  flex-grow: 1;
 }
 
 .response-area {
   margin-top: 20px;
-  height: calc(400px - 40px);
-  border: 3px solid #CCCCCC;
+  height: calc(560px - 40px);
+  border: 2px solid #CCCCCC;
   padding: 10px;
-  margin-bottom: 30px;
   overflow: auto;
   word-wrap: break-word;
-  border-radius: 5px; /* Add rounded edges to input fields */
+  border-radius: 10px;
+  font-size: 18px;
 }
 
-.typing-text {
-  animation: typing 3s steps(30, end);
-  white-space: normal;
-  overflow: hidden;
-  border-right: none;
-  font-family: Verdana, sans-serif;
-}
-
-.y-character {
-  margin-right: 2px; /* Add a small margin for "y" characters */
-}
-
-@keyframes typing {
-  from {
-    width: 0;
-  }
-}
 </style>

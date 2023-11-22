@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Layout from '@/components/Layout.vue'; // Import the layout component
-import Home from '../views/Home.vue'
 import Logout from '../views/Logout.vue'
 import store from '../store/index'
 import CreateLogin from "@/components/CreateLogin.vue";
 import CreateRegister from "@/components/CreateRegister.vue";
+import CreateHome from "@/components/CreateHome.vue";
 
 Vue.use(Router)
 
@@ -20,7 +20,7 @@ const router = new Router({
         {
           path: '',
           name: 'home',
-          component: Home,
+          component: CreateHome,
           meta: {
             requiresAuth: true
           }
