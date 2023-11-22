@@ -1,26 +1,25 @@
 <template>
-<div class="aol-box">
+  <div class="aol-box">
 
-      <div class="content">
-        <img src="../../src/Assets/Resources/uofa.jpg" alt="University of Arkansas Logo" class="logo-image">
+    <div class="content">
+      <img src="../../src/Assets/Resources/uofa.jpg" alt="University of Arkansas Logo" class="logo-image">
       <h1 class="aol-heading">RazorBack Search</h1>
 
       <div class="aol-box-input">
-        <input v-model = "userWithInput.questionOrResponse" @keyup.enter="submitInput" placeholder="Enter Query">
+        <input v-model="userWithInput.query" @keyup.enter="submitInput" placeholder="Enter Query">
       </div>
 
-      <loading-overlay :loading = "loading"/>
-      <div class = "response-area">
-          <div class="typing-text" v-if="responseVisible" v-html="typedResponse"></div>
+      <loading-overlay :loading="loading"/>
+      <div class="response-area">
+        <div class="typing-text" v-if="responseVisible" v-html="typedResponse"></div>
       </div>
 
       <div class="button-container">
-          <router-link v-bind:to="{ name: 'logout' }" class="aol-logout">Logout</router-link>
-           <router-link v-bind:to="{ name: 'home' }"></router-link>
-          <a href="https://calendly.com/capstonecalendlyuser/chatbot-support" target="_blank" class="aol-refresh">Support</a>
+        <router-link v-bind:to="{ name: 'logout' }" class="aol-logout">Logout</router-link>
+        <router-link v-bind:to="{ name: 'home' }" class="aol-index">Indexing</router-link>
       </div>
     </div>
-</div>
+  </div>
 </template>
 <script>
 import messageService from '../services/MessageService';
@@ -30,90 +29,94 @@ export default {
   name: 'home',
   data() {
     return {
-        userWithInput: {
-          id : this.$store.state.user.id,
-          type : 'false', // false being that it is a question. True = Response
-          questionOrResponse : '',
-        },
-        loading: false,
-        responseVisible: false,
-        isResponding: false,
-        typedResponse: "",
-        response: ''
+      userWithInput: {
+        id: this.$store.state.user.id,
+        type: 'false', // false being that it is a query and not indexing
+        query: '',
+      },
+      loading: false,
+      responseVisible: false,
+      isResponding: false,
+      typedResponse: "",
+      response: ''
     };
   },
-   methods: {
+  methods: {
     submitInput() {
-    if (!this.isResponding) {
-      this.loading = true;
+      if (!this.isResponding) {
+        this.loading = true;
 
-      const formatedData = {
-        id: this.userWithInput.id,
-        type: this.userWithInput.type,
-        questionOrResponse: this.userWithInput.questionOrResponse
-      };
+        const formatedData = {
+          id: this.userWithInput.id,
+          type: this.userWithInput.type,
+          query: this.userWithInput.query
+        };
 
-      // Reset typedResponse before triggering animation
+        // Reset typedResponse before triggering animation
+        this.typedResponse = '';
+
+        this.isResponding = true;
+
+        // Simulate an asynchronous action
+        setTimeout(() => {
+          messageService
+              .sendQuestion(formatedData)
+              .then(response => {
+                this.response = response.data;
+                this.userWithInput.query = '';
+                this.loading = false;
+                this.responseVisible = true;
+                this.startTypingEffect(this.response);
+                this.isResponding = false;
+              })
+              .catch(error => {
+                console.error('Error fetching data:', error);
+                this.loading = false;
+                this.isResponding = false;
+              });
+        }, 50);
+      }
+    },
+    startTypingEffect(text) {
       this.typedResponse = '';
+      this.currentIndex = 0;
+      clearInterval(this.typingInterval);
 
-      this.isResponding = true;
+      this.typingInterval = setInterval(() => {
+        if (this.currentIndex < text.length) {
+          const char = text[this.currentIndex];
+          const isSpace = char === ' ';
 
-      // Simulate an asynchronous action
-      setTimeout(() => {
-        messageService
-          .sendQuestion(formatedData)
-          .then(response => {
-            this.response = response.data;
-            this.userWithInput.questionOrResponse = '';
-            this.loading = false;
-            this.responseVisible = true;
-            this.startTypingEffect(this.response);
-            this.isResponding = false;
-          })
-          .catch(error => {
-            console.error('Error fetching data:', error);
-            this.loading = false;
-            this.isResponding = false;
-          });
-      }, 50);
-    }
-  },
-  startTypingEffect(text) {
-    this.typedResponse = '';
-    this.currentIndex = 0;
-    clearInterval(this.typingInterval);
+          if (isSpace && text[this.currentIndex + 1] === ' ') {
+            this.typedResponse += '<br>'; // Add a newline for two consecutive spaces
+            this.currentIndex += 2; // Skip the second space
+          } else if (char === '^') {
+            const endIndex = text.indexOf('^', this.currentIndex + 1);
+            if (endIndex !== -1) {
+              const boldText = text.substring(this.currentIndex + 1, endIndex); // ^text^ data will be bold
+              this.typedResponse += `<b>${boldText}</b>`;
+              this.currentIndex = endIndex + 1;
+            } else {
+              this.typedResponse += char;
+              this.currentIndex++;
+            }
+          } else if (char === '$') {
+            const endIndex = text.indexOf('$', this.currentIndex + 1); // $LinkName$*http://link*
+            if (endIndex !== -1) {
+              const hyperlinkName = text.substring(this.currentIndex + 1, endIndex);
+              this.currentIndex = endIndex + 1;
 
-    this.typingInterval = setInterval(() => {
-      if (this.currentIndex < text.length) {
-        const char = text[this.currentIndex];
-        const isSpace = char === ' ';
-
-        if (isSpace && text[this.currentIndex + 1] === ' ') {
-          this.typedResponse += '<br>'; // Add a newline for two consecutive spaces
-          this.currentIndex += 2; // Skip the second space
-        } else if (char === '^') {
-          const endIndex = text.indexOf('^', this.currentIndex + 1);
-          if (endIndex !== -1) {
-            const boldText = text.substring(this.currentIndex + 1, endIndex); // ^text^ data will be bold
-            this.typedResponse += `<b>${boldText}</b>`;
-            this.currentIndex = endIndex + 1;
-          } else {
-            this.typedResponse += char;
-            this.currentIndex++;
-          }
-        } else if (char === '$') {
-          const endIndex = text.indexOf('$', this.currentIndex + 1); // $LinkName$*http://link*
-          if (endIndex !== -1) {
-            const hyperlinkName = text.substring(this.currentIndex + 1, endIndex);
-            this.currentIndex = endIndex + 1;
-
-            const startLinkIndex = text.indexOf('*', this.currentIndex);
-            if (startLinkIndex !== -1) {
-              const endLinkIndex = text.indexOf('*', startLinkIndex + 1);
-              if (endLinkIndex !== -1) {
-                const linkText = text.substring(startLinkIndex + 1, endLinkIndex);
-                this.typedResponse += `<a href="${linkText}" target="_blank">${hyperlinkName}</a>`;
-                this.currentIndex = endLinkIndex + 1;
+              const startLinkIndex = text.indexOf('*', this.currentIndex);
+              if (startLinkIndex !== -1) {
+                const endLinkIndex = text.indexOf('*', startLinkIndex + 1);
+                if (endLinkIndex !== -1) {
+                  const linkText = text.substring(startLinkIndex + 1, endLinkIndex);
+                  this.typedResponse += `<a href="${linkText}" target="_blank">${hyperlinkName}</a>`;
+                  this.currentIndex = endLinkIndex + 1;
+                } else {
+                  this.typedResponse += char;
+                  this.currentIndex++;
+                }
               } else {
                 this.typedResponse += char;
                 this.currentIndex++;
@@ -127,31 +130,27 @@ export default {
             this.currentIndex++;
           }
         } else {
-          this.typedResponse += char;
-          this.currentIndex++;
+          clearInterval(this.typingInterval);
         }
-      } else {
-        clearInterval(this.typingInterval);
-      }
-    }, 10); // Adjust typing interval as needed
+      }, 10); // Adjust typing interval as needed
+    },
+    showResponse() {
+      this.responseVisible = true;
+      this.startTypingEffect(this.response);
+    }
   },
-  showResponse() {
-    this.responseVisible = true;
-    this.startTypingEffect(this.response);
-  }
-},
-watch: {
-  response: {
-    immediate: true,
-    handler() {
-      if (!this.loading && this.responseVisible === false) {
-        this.showResponse();
+  watch: {
+    response: {
+      immediate: true,
+      handler() {
+        if (!this.loading && this.responseVisible === false) {
+          this.showResponse();
+        }
       }
     }
-  }
-},
-  components:{
-   LoadingOverlay
+  },
+  components: {
+    LoadingOverlay
   },
   computed: {
     formattedResponse() {
@@ -171,7 +170,7 @@ watch: {
   border: 3px solid #CCCCCC;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   padding: 20px; /* Add padding for content spacing */
-  max-width: 900px;
+  max-width: 1000px;
   width: 100%;
   margin: 0 auto; /* Adjust margin for centering */
   position: relative;
@@ -216,7 +215,7 @@ watch: {
 }
 
 .aol-logout,
-.aol-refresh {
+.aol-index {
   position: absolute;
   text-decoration: none;
   bottom: 20px;
@@ -230,19 +229,19 @@ watch: {
   transition: text-decoration 0.3s;
   border-radius: 25px; /* Add rounded corners */
 }
- 
-.aol-logout{
+
+.aol-logout {
   left: 25px;
   background-color: #A03611;
 }
 
-.aol-refresh{
+.aol-index {
   right: 25px;
   background-color: #A03611;
 }
 
 .aol-logout:hover,
-.aol-refresh:hover {
+.aol-index:hover {
   text-decoration: underline;
 }
 
@@ -253,7 +252,7 @@ watch: {
 
 .response-area {
   margin-top: 20px;
-  height: calc(400px - 40px); 
+  height: calc(400px - 40px);
   border: 3px solid #CCCCCC;
   padding: 10px;
   margin-bottom: 30px;
@@ -266,7 +265,7 @@ watch: {
   animation: typing 3s steps(30, end);
   white-space: normal;
   overflow: hidden;
-  border-right: none; 
+  border-right: none;
   font-family: Verdana, sans-serif;
 }
 
