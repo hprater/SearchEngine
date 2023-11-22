@@ -104,7 +104,7 @@ export default {
 .aol-heading {
   font-size: 35px;
   color: #A03611;
-  font-family: 'Dancing Script', cursive;
+
 }
 
 .aol-logout {
