@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: my-postgres-container
+    environment:
+      POSTGRES_DB: index
+      POSTGRES_USER: final_capstone_appuser
+      POSTGRES_PASSWORD: owner
+    ports:
+      - "5432:5432"
+    networks:
+      - my-network
+      -
+networks:
+  my-network:
+    driver: bridge

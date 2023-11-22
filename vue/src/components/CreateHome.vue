@@ -1,23 +1,12 @@
 <template>
 <div class="aol-box">
-    
-      <div class="side-panel">
-        <img src="../../src/Assets/Resources/200px-America_Online_logo.svg.png" alt="Logo" class="logo-image">
-      </div>
 
       <div class="content">
-        <div class="message-bar">
-          <img src="../../src/Assets/Resources/aol-icon-4.png" alt="Welcome Image" class="welcome-image">
-          <div class="welcome-text">
-          <span v-html="this.$store.state.motivationalQuote"></span>
-        </div>
-      </div>
-
-    <br/>
-      <h1 class="aol-heading">BotBuddy</h1>
+        <img src="../../src/Assets/Resources/uofa.jpg" alt="University of Arkansas Logo" class="logo-image">
+      <h1 class="aol-heading">RazorBack Search</h1>
 
       <div class="aol-box-input">
-        <input v-model = "userWithInput.questionOrResponse" @keyup.enter="submitInput" placeholder="Enter Question">
+        <input v-model = "userWithInput.questionOrResponse" @keyup.enter="submitInput" placeholder="Enter Query">
       </div>
 
       <loading-overlay :loading = "loading"/>
@@ -181,18 +170,25 @@ watch: {
   background-color: #FFFFFF;
   border: 3px solid #CCCCCC;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  padding: 0px;
+  padding: 20px; /* Add padding for content spacing */
   max-width: 900px;
   width: 100%;
-  margin : 0 auto;
+  margin: 0 auto; /* Adjust margin for centering */
   position: relative;
+  border-radius: 15px; /* Add rounded edges */
+}
+
+.logo-image {
+  max-width: 100px; /* Adjust the image's max width */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 10px; /* Add rounded corners to the image */
 }
 
 .aol-heading {
-  font-size: 24px;
+  font-size: 28px;
   margin-bottom: 20px;
-  text-align: center;
-  color: #0077CC;
+  color: #A03611;
+  text-align: center; /* Center the text horizontally */
 }
 
 .aol-box-input {
@@ -210,6 +206,7 @@ watch: {
   border: 3px solid #CCCCCC;
   font-family: Verdana, sans-serif;
   font-size: 16px;
+  border-radius: 5px; /* Add rounded edges to input fields */
 }
 
 .button-container {
@@ -219,7 +216,7 @@ watch: {
 }
 
 .aol-logout,
-.aol-refresh {  
+.aol-refresh {
   position: absolute;
   text-decoration: none;
   bottom: 20px;
@@ -231,16 +228,17 @@ watch: {
   font-family: "MS Sans Serif", sans-serif;
   font-size: 14px;
   transition: text-decoration 0.3s;
+  border-radius: 25px; /* Add rounded corners */
 }
  
 .aol-logout{
-  left: 160px;
-  background-color: #0077CC;
+  left: 25px;
+  background-color: #A03611;
 }
 
 .aol-refresh{
-  right: 20px;
-  background-color: #0077CC;
+  right: 25px;
+  background-color: #A03611;
 }
 
 .aol-logout:hover,
@@ -248,50 +246,9 @@ watch: {
   text-decoration: underline;
 }
 
-.message-bar {
-  display: flex;
-  align-items: center; /* Vertically center content */
-  background-color: #737475;
-  color: rgb(194, 191, 191);
-  font-family: "MS Sans Serif", sans-serif;
-  font-size: 18px;
-  padding: 4px;
-  text-align: left;
-  border-bottom: 2px solid #CCCCCC;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.welcome-image {
-  width: 24px; /* Set the width of the image */
-  height: 24px; /* Set the height of the image */
-  margin-right: 10px; /* Add some spacing between image and text */
-}
-
-.welcome-text {
-  display: flex;
-  align-items: baseline; /* Align text baseline with image */
-}
-
-.side-panel {
-  background-color: #0077CC;
-  padding: 20px; 
-  align-items: center;
-  display: flex;
-}
-
-.logo-image {
-  max-width: 100px; /* Adjust the logo's max width */
-  height: auto; /* Maintain aspect ratio */
-  margin-bottom: 10px;
-}
-
 .content {
   flex-grow: 1; /* Allow content to grow and fill available space */
-  padding: 20px; 
+  padding: 5px;
 }
 
 .response-area {
@@ -302,6 +259,7 @@ watch: {
   margin-bottom: 30px;
   overflow: auto;
   word-wrap: break-word;
+  border-radius: 5px; /* Add rounded edges to input fields */
 }
 
 .typing-text {

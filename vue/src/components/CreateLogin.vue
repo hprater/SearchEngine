@@ -1,17 +1,9 @@
 <template>
     <form @submit.prevent="login" class="aol-form">
 
-      <div class="side-panel">
-        <img src="../../src/Assets/Resources/200px-America_Online_logo.svg.png" alt="Logo" class="logo-image">
-      </div>
-
       <div class="content">
-      <div class="message-bar"> 
-        <img src="../../src/Assets/Resources/aol-icon-4.png" alt="Welcome Image" class="welcome-image">
-        Welcome!
-        </div>
 
-      <h1 class="aol-heading">BotBuddy Sign On</h1>
+      <h1 class="aol-heading">RazorBack Login</h1>
       <div role="alert" v-if="invalidCredentials" class="aol-alert">
         Invalid username and password!
       </div>
@@ -84,18 +76,19 @@ export default {
   background-color: #FFFFFF;
   border: 3px solid #CCCCCC;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  padding: 0px;
+  padding: 20px; /* Add padding for content spacing */
   max-width: 600px;
   width: 100%;
-  margin : 0 auto;
+  margin: 20px auto; /* Adjust margin for centering */
   position: relative;
+  border-radius: 15px; /* Add rounded edges */
 }
 
 .aol-heading {
-  font-size: 24px;
+  font-size: 28px;
   margin-bottom: 20px;
   text-align: center;
-  color: #0077CC;
+  color: #A03611;
 }
 
 .aol-form-input {
@@ -121,6 +114,7 @@ export default {
   padding: 10px;
   margin-bottom: 10px;
   border: 1px solid #CCCCCC;
+  border-radius: 5px; /* Add rounded edges to input fields */
 }
 
 .button-container {
@@ -130,28 +124,29 @@ export default {
 }
 
 .aol-signing-up,
-.aol-signing-on {  
+.aol-signing-on {
   position: absolute;
   text-decoration: none;
   bottom: 20px;
   color: #FFFFFF;
   padding: 10px 20px;
-  border: 1px solid #000000;
-  box-shadow: 7px 7px 0px rgba(100, 98, 98, 0.2);
+  border: none; /* Remove the border to create a cleaner appearance */
+  border-radius: 25px; /* Add rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle box shadow for depth */
   cursor: pointer;
   font-family: "MS Sans Serif", sans-serif;
   font-size: 14px;
-  transition: text-decoration 0.3s;
-}
- 
-.aol-signing-on{
-  left: 160px;
-  background-color: #0077CC;
+  transition: background-color 0.3s, color 0.3s; /* Add transition for a smoother effect */
 }
 
-.aol-signing-up{
-  right: 20px;
-  background-color: #0077CC;
+.aol-signing-on {
+  left: 35px;
+  background-color:#A03611;
+}
+
+.aol-signing-up {
+  right: 35px;
+  background-color: #A03611;
 }
 
 .aol-signing-on:hover,
@@ -159,47 +154,13 @@ export default {
   text-decoration: underline;
 }
 
-.message-bar {
-  background-color: #737475; 
-  color: rgb(194, 191, 191);
-  font-family: "MS Sans Serif", sans-serif;
-  font-size: 18px;
-  padding: 4px;
-  text-align: left;
-  border-bottom: 2px solid #CCCCCC;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  box-sizing: border-box; /* Include padding within width */
-}
-
-.welcome-image {
-  max-width: 20px;
-  height: auto;
-  margin-right: 10px; 
-}
-
-.side-panel {
-  background-color: #0077CC;
-  padding: 20px; 
-  align-items: center;
-  display: flex;
-}
-
-.logo-image {
-  max-width: 100px; /* Adjust the logo's max width */
-  height: auto; /* Maintain aspect ratio */
-  margin-bottom: 10px;
-}
-
 .content {
   flex-grow: 1; /* Allow content to grow and fill available space */
-  padding: 20px; 
+  padding: 20px;
 }
 
 #panel {
-display: flex;
-
+  display: flex;
 }
+
 </style>
