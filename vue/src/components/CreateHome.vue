@@ -13,7 +13,7 @@
     <div class="aol-box">
       <div class="content">
         <div class="aol-box-input">
-          <input v-model="userWithInput.query" @keyup.enter="submitInput" placeholder="Enter Query">
+          <input v-model="userWithInput.queryWords" @keyup.enter="submitInput" placeholder="Enter Query">
         </div>
 
         <loading-overlay :loading="loading"/>
@@ -37,7 +37,7 @@ export default {
       userWithInput: {
         id: this.$store.state.user.id,
         type: 'false', // false being that it is a query and not indexing
-        query: '',
+        queryWords: '',
       },
       loading: false,
       responseVisible: false,
@@ -52,14 +52,14 @@ export default {
         const formattedData = {
           id: this.userWithInput.id,
           type: this.userWithInput.type,
-          query: this.userWithInput.query
+          queryWords: this.userWithInput.queryWords
         };
 
         messageService
             .sendQuestion(formattedData)
             .then(response => {
               this.response = response.data;
-              this.userWithInput.query = '';
+              this.userWithInput.queryWords = '';
               this.responseVisible = true;
             })
             .catch(error => {

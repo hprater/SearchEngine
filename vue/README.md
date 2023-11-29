@@ -223,20 +223,22 @@ When you reach the `/register` route, you'll see a bare registration page. Like 
 ​
 When you fill in a username, password, confirm the password role, and click the "Create Account" button, the method `register()` is called. This calls the `register()` method in `/src/services/AuthService.js`. This passes  your user details to your back-end application's REST API to create a new user:
 ​
+
 ```js
 methods: {
-register() {
-  // ...
-  authService
-    .register(this.user)
-    .then(response => {
-      if (response.status == 201) {
-        this.$router.push({
-          path: "/login",
-          query: { registration: "success" }
-        });
-      }
-    })
-  // ...
-}
+    register()
+    {
+        // ...
+        authService
+            .register(this.user)
+            .then(response => {
+                if (response.status == 201) {
+                    this.$router.push({
+                        path: "/login",
+                        queryWords: {registration: "success"}
+                    });
+                }
+            })
+        // ...
+    }
 ```

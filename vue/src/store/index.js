@@ -19,15 +19,9 @@ if(currentToken != null) {
 export default new Vuex.Store({
   state: {
     token: currentToken || '',
-    user: currentUser || {},
-    motivationalQuote: "",
-
+    user: currentUser || {}
   },
   mutations: {
-    SET_MOTIVATIONAL_QUOTE(state, quote) {
-      state.motivationalQuote = quote;
-    },
-
     SET_AUTH_TOKEN(state, token) {
       state.token = token;
       localStorage.setItem('token', token);

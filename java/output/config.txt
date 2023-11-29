@@ -1,0 +1,4 @@
+numRecordsMapFile=0
+numRecordsDictFile=75000
+numRecordsPostFile=0
+outputDirectory=/var/folders/8z/85lthl1s3kb4rkg4y1mybzg80000gn/T/output7196128142986115340

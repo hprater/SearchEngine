@@ -59,7 +59,7 @@ export default {
             if (response.status == 201) {
               this.$router.push({
                 path: '/login',
-                query: { registration: 'success' },
+                queryWords: { registration: 'success' },
               });
             }
           })

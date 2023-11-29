@@ -12,7 +12,6 @@ services:
       - "5432:5432"
     networks:
       - my-network
-      -
 networks:
   my-network:
     driver: bridge
