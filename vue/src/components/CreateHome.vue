@@ -63,7 +63,12 @@ export default {
               this.responseVisible = true;
             })
             .catch(error => {
-              console.error('Error fetching data:', error);
+              this.$notify({
+                group: 'app',
+                type: 'error',
+                title: 'Error fetching data',
+                text: error.message, // Display the error message
+              });
             })
             .finally(() => {
               this.loading = false;

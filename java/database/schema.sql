@@ -11,10 +11,4 @@ CREATE TABLE users (
 	CONSTRAINT PK_user PRIMARY KEY (user_id)
 );
 
-CREATE TABLE responses (
-    category varchar(50) NOT NULL UNIQUE,
-    response varchar(2500) NOT NULL,
-    CONSTRAINT PK_response PRIMARY KEY (category)
-);
-
 COMMIT TRANSACTION;
