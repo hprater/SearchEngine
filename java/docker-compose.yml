@@ -5,9 +5,9 @@ services:
     image: postgres:latest
     container_name: my-postgres-container
     environment:
-      POSTGRES_DB: index
-      POSTGRES_USER: final_capstone_appuser
-      POSTGRES_PASSWORD: owner
+      POSTGRES_DB: postgres
+      POSTGRES_USER: pgadmin
+      POSTGRES_PASSWORD: 7sO60k48i1h2359DtfYw
     ports:
       - "5432:5432"
     networks:

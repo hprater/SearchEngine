@@ -33,7 +33,7 @@ public class Indexer {
         indexHelper.openForUpdate();
 
         // Grab the files in the specified directory and put into array for processing
-        File processDir = ResourceUtils.getFile("classpath:static/files");
+        File processDir = ResourceUtils.getFile("classpath:static/files/");
         File[] files = processDir.listFiles();
 
         // Document Object

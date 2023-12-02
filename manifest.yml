@@ -1,0 +1,25 @@
+---
+applications:
+- name: prater-backend
+  instances: 1
+  memory: 960M
+  disk_quota: 768M
+  path: java/target/search-engine-1.0.0.jar
+  env:
+    JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 11.+ } }'
+    SPRING_PROFILES_ACTIVE: cloud
+  routes:
+  - route: searchback.apps.dhaka.cf-app.com
+  buildpacks:
+  - java_buildpack_offline
+  services:
+  - search-db
+- name: prater-frontend
+  instances: 1
+  memory: 32M
+  disk_quota: 32M
+  path: vue/dist
+  routes:
+  - route: www.apps.dhaka.cf-app.com
+  buildpacks:
+  - staticfile_buildpack

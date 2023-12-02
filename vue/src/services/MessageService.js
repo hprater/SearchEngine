@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const http = axios.create({
-    baseURL: 'http://localhost:9000'
+    baseURL: 'https://searchback.apps.dhaka.cf-app.com'
 });
 
 //Interceptor to include the token in request headers
