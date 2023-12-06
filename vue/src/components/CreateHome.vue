@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- Image, Header, and Logout Button -->
+    <!-- Header Elements -->
     <div class="header-elements">
       <img src="../../src/Assets/Resources/uofa.jpg" alt="University of Arkansas Logo" class="logo-image">
       <h1 class="aol-heading">RazorBack Search</h1>
@@ -12,14 +12,23 @@
     <!-- Query and Response Box -->
     <div class="aol-box">
       <div class="content">
+        <!-- Search Input Box -->
         <div class="aol-box-input">
           <input v-model="userWithInput.queryWords" @keyup.enter="submitInput" placeholder="Enter Query">
         </div>
 
+        <!-- Loading Overlay -->
         <loading-overlay :loading="loading"/>
+
         <!-- Display the response area if there is a response -->
         <div class="response-area" v-if="responseVisible">
-          <div v-html="formattedResponse"></div>
+          <!-- Use the ResultItem component for each result -->
+          <result-item
+              v-for="(result, index) in formattedResults"
+              :key="index"
+              :result="result"
+              :base-url="baseUrl"
+          ></result-item>
         </div>
       </div>
     </div>
@@ -29,6 +38,7 @@
 <script>
 import messageService from '../services/MessageService';
 import LoadingOverlay from './CreateLoading.vue';
+import ResultItem from './ResultFormat.vue';
 
 export default {
   name: 'home',
@@ -36,13 +46,27 @@ export default {
     return {
       userWithInput: {
         id: this.$store.state.user.id,
-        type: 'false', // false being that it is a query and not indexing
+        type: 'false',
         queryWords: '',
       },
       loading: false,
       responseVisible: false,
-      response: ''
+      response: '',
     };
+  },
+  components: {
+    LoadingOverlay,
+    ResultItem,
+  },
+  computed: {
+    baseUrl() {
+      return 'http://localhost:8080/files';
+    },
+    formattedResults() {
+      const results = this.response.split('\n');
+      // Filter out empty results
+      return results.filter(result => result.trim() !== '');
+    },
   },
   methods: {
     submitInput() {
@@ -52,7 +76,7 @@ export default {
         const formattedData = {
           id: this.userWithInput.id,
           type: this.userWithInput.type,
-          queryWords: this.userWithInput.queryWords
+          queryWords: this.userWithInput.queryWords,
         };
 
         messageService
@@ -67,7 +91,7 @@ export default {
                 group: 'app',
                 type: 'error',
                 title: 'Error fetching data',
-                text: error.message, // Display the error message
+                text: error.message,
               });
             })
             .finally(() => {
@@ -76,20 +100,10 @@ export default {
       }
     }
   },
-  components: {
-    LoadingOverlay
-  },
-  computed: {
-    formattedResponse() {
-      // Format response text with HTML line breaks
-      return this.response.replace(/\n/g, '<br>');
-    }
-  }
 };
 </script>
 
 <style scoped>
-/* Your existing styles here */
 .header-elements {
   display: flex;
   justify-content: space-between;
