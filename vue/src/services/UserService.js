@@ -1,8 +1,7 @@
 import axios from "axios";
 
 const http = axios.create({
-    baseURL: 'http://localhost:8080'
-        //'https://searchback.apps.dhaka.cf-app.com'
+    baseURL: 'https://searchback.apps.dhaka.cf-app.com'
 })
 
 export default {

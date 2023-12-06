@@ -60,7 +60,7 @@ export default {
   },
   computed: {
     baseUrl() {
-      return 'http://localhost:8080/files';
+      return 'https://searchback.apps.dhaka.cf-app.com/files';
     },
     formattedResults() {
       const results = this.response.split('\n');
