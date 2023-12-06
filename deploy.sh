@@ -1,8 +1,8 @@
 cd java
 ./mvnw clean package
 
-rm -rf vue/dist
 cd ../vue
+rm -rf dist
 npm run build
 
 cd ..
